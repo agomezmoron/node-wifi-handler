@@ -6,15 +6,16 @@
  * Network interface
  * @description It describes a network.
  */
-interface Network {
+class Network {
     bssid : string;
     ssid : string;
-    channel: string;
+    mode : string;
+    channel: number;
     frecuency : number;
-    signalLevel : string;
-    quality: string;
+    signalLevel : number;
+    quality: number;
     security: string;
-    securityFlags : string[];
+    securityFlags : Object;
 }
 
 export default Network;

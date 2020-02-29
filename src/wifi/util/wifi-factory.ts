@@ -3,21 +3,21 @@
  * Author: Alejandro Gomez @agomezmoron
  */
 
-import WifiHandler from "./wifi/wifi-handler";
-import LinuxHandler from "./wifi/linux/LinuxHandler";
+import WifiHandler from "../wifi-handler";
+import LinuxHandler from "../linux/LinuxHandler";
 
 /**
  * Main class to expose the plugin utilities.
  * @description Main class to expose the plugin utilities.
  */
-abstract class OSFactory {
+abstract class WifiFactory {
 
   public static getInstance(config) : WifiHandler {
-    const instance : WifiHandler = null;
+    let instance : WifiHandler = null;
 
     switch (process.platform) {
         case 'linux':
-          instance = new LinuxHandler();
+          instance = new LinuxHandler(config);
           break;
         case 'darwin':
           // macOS
@@ -28,6 +28,6 @@ abstract class OSFactory {
     return instance;
   }
 
-};
+}
 
-export default OSFactory;
+export default WifiFactory;

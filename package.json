@@ -1,0 +1,69 @@
+{
+  "name": "node-wifi-handler",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "files": [
+    "dist/index.js"
+  ],
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node dist/index.js",
+    "test": "jest",
+    "lint": "eslint 'src/**/*'"
+  },
+  "author": "Alejandro Gomez @agomezmoron",
+  "keywords": [
+    "wifi",
+    "wireless",
+    "wpa",
+    "wlan",
+    "ssid"
+  ],
+  "bugs": {
+    "url": "https://github.com/agomezmoron/node-wifi-handler/issues"
+  },
+  "homepage": "https://github.com/agomezmoron/node-wifi-handler",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.5.0",
+    "@typescript-eslint/parser": "^2.5.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "husky": "^3.0.5",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      ".git",
+      "node_modules"
+    ],
+    "watch": [
+      "src"
+    ],
+    "ext": "ts"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

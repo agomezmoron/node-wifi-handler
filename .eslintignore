@@ -1,0 +1,7 @@
+/dist
+/env
+/node_modules
+/src/assets
+/src/__tests__
+/src/__mocks__
+empty

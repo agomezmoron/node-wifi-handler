@@ -31,9 +31,8 @@ class LinuxHandler extends WifiHandler {
         const args = [];
         args.push('--terse');
         args.push('--fields');
-        args.push(
-            'active,ssid,bssid,mode,chan,freq,signal,security,wpa-flags,rsn-flags'
-        );
+        //args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS, CHAN');
+        args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS');
         args.push('device');
         args.push('wifi');
         args.push('list');
@@ -60,18 +59,19 @@ class LinuxHandler extends WifiHandler {
                 if (fields.length >= 9) {
                     const network: Network = new Network();
 
-                    network.ssid = fields[1].replace(/&&/g, ':');
+                    network.ssid = fields[1].replace(/&&/g, ':')
+                        .replace('\'', '').replace('\'', '');
                     network.bssid = fields[2].replace(/&&/g, ':');
                     network.mode = fields[3].replace(/&&/g, ':');
-                    network.channel = parseInt(fields[4].replace(/&&/g, ':'));
-                    network.frecuency = parseInt(fields[5].replace(/&&/g, ':'));
-                    network.signalLevel = NetworkUtils.dBFromQuality(fields[6].replace(/&&/g, ':'));
-                    network.quality = parseFloat(fields[6].replace(/&&/g, ':'));
-                    network.security = fields[7].replace(/&&/g, ':') != '(none)' ? fields[7].replace(/&&/g, ':') : 'none';
+                    network.frecuency = parseInt(fields[4].replace(/&&/g, ':'));
+                    network.signalLevel = NetworkUtils.dBFromQuality(fields[5].replace(/&&/g, ':'));
+                    network.quality = parseFloat(fields[5].replace(/&&/g, ':'));
+                    network.security = fields[6].replace(/&&/g, ':') != '(none)' ? fields[6].replace(/&&/g, ':') : 'none';
                     network.securityFlags = {
-                        wpa: fields[8].replace(/&&/g, ':'),
-                        rsn: fields[9].replace(/&&/g, ':')
+                        wpa: fields[7].replace(/&&/g, ':'),
+                        rsn: fields[8].replace(/&&/g, ':')
                     };
+                    //network.channel = parseInt(fields[9].replace(/&&/g, ':'));
 
                     networks.push(network);
                 }

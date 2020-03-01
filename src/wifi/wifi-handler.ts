@@ -21,7 +21,7 @@ abstract class WifiHandler {
      *  - 'interface' with the network interface name
      *  - 'debug' flag to know if true / false.
      */
-    constructor(config: {
+    constructor(config?: {
         interface: string,
         debug: boolean
     }) {
@@ -65,12 +65,12 @@ abstract class WifiHandler {
     /**
      * Command for the custom scan.
      */
-    abstract getScanCommand(): string;
+    protected abstract getScanCommand(): string;
 
     /**
      * Args for the custom scan command.
      */
-    abstract getScanArgs(): string[];
+    protected abstract getScanArgs(): string[];
 
     /**
      * It parses the scan command output.
@@ -105,7 +105,7 @@ abstract class WifiHandler {
      * Method to configure the Handler.
      * It configures the internal attributes.
      */
-    private configure(config) {
+    private configure(config?) {
         if (config && config.debug) {
             this.debug = true;
         }

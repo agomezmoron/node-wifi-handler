@@ -12,7 +12,7 @@ import LinuxHandler from "../linux/LinuxHandler";
  */
 abstract class WifiFactory {
 
-  public static getInstance(config) : WifiHandler {
+  public static getInstance(config?) : WifiHandler {
     let instance : WifiHandler = null;
 
     switch (process.platform) {

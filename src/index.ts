@@ -10,9 +10,6 @@
 import WifiHandler from "./wifi/wifi-handler";
 import WifiFactory from "./wifi/util/wifi-factory";
 
-/** Develop Console Color */
-require('pretty-console-colors');
-
 const WifiWrapper = {
 
     /**
@@ -21,7 +18,7 @@ const WifiWrapper = {
      *  - interface: network interface. Optional.
      *  - debug: true if you want to enable the debug mode.
      */
-    getWifiHandler(config: {
+    getWifiHandler(config?: {
         interface: string,
         debug: boolean
     }): WifiHandler {

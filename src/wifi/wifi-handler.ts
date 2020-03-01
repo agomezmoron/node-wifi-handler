@@ -12,6 +12,10 @@ import Network from "./Network";
  */
 abstract class WifiHandler {
 
+    protected comamndTypes = {
+        SCAN : 'scan',
+        EXIST : 'exist'
+    };
     protected interface: string = undefined; // by default
     protected debug: boolean = false; // by default
 
@@ -29,11 +33,45 @@ abstract class WifiHandler {
     }
 
     /**
+     * Scan mode to retrieve the Networks that are in the range.
+     */
+    async scan(): Promise<Network[]> {
+        return new Promise<Network[]>((resolve, reject) => {
+            this.execute(this.getCommand(this.comamndTypes.SCAN), this.getArgs(this.comamndTypes.SCAN))
+                .then(result => {
+                    resolve(this.parseScanOutput(result));
+                })
+                .catch(err => {
+                    this.showDebug(err);
+                    reject([]);
+                });
+        });
+    }
+
+    async
+
+    /**
+     * Command for the given option.
+     */
+    protected abstract getCommand(option : string): string;
+
+    /**
+     * Args for the given option.
+     */
+    protected abstract getArgs(option : string): string[];
+
+    /**
+     * It parses the scan command output.
+     * @param str with the output.
+     */
+    abstract parseScanOutput(str): Network[];
+
+    /**
      * Method to wrap the command execution.
      * @param command to be executed.
      * @param args of the command.
      */
-    protected execute(command: string, args: string[]): Promise<any> {
+    private execute(command: string, args: string[]): Promise<any> {
         const exec = child.execFile;
         const envVars = this.getEnvVars();
         return new Promise((resolve, reject) => {
@@ -45,38 +83,6 @@ abstract class WifiHandler {
             });
         });
     }
-
-    /**
-     * Scan mode to retrieve the Networks that are in the range.
-     */
-    async scan(): Promise<Network[]> {
-        return new Promise<Network[]>((resolve, reject) => {
-            this.execute(this.getScanCommand(), this.getScanArgs())
-                .then(result => {
-                    resolve(this.parseScanOutput(result));
-                })
-                .catch(err => {
-                    this.showDebug(err);
-                    reject([]);
-                });
-        });
-    }
-
-    /**
-     * Command for the custom scan.
-     */
-    protected abstract getScanCommand(): string;
-
-    /**
-     * Args for the custom scan command.
-     */
-    protected abstract getScanArgs(): string[];
-
-    /**
-     * It parses the scan command output.
-     * @param str with the output.
-     */
-    abstract parseScanOutput(str): Network[];
 
     /**
      * It showes the given message if it's in debug mode.

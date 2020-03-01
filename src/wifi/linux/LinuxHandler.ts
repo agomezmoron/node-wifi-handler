@@ -23,23 +23,39 @@ class LinuxHandler extends WifiHandler {
         super(config);
     }
 
-    getScanCommand(): string {
-        return 'nmcli';
+    protected getCommand(option : string): string {
+        switch (option) {
+            case this.comamndTypes.SCAN:
+            case this.comamndTypes.EXIST:
+                return 'nmcli';
+                break;
+            default:
+                return 'nmcli';
+                break;
+        }
     }
 
-    getScanArgs(): string[] {
+    protected getArgs(option : string): string[] {
         const args = [];
-        args.push('--terse');
-        args.push('--fields');
-        //args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS, CHAN');
-        args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS');
-        args.push('device');
-        args.push('wifi');
-        args.push('list');
+        switch (option) {
+            case this.comamndTypes.SCAN:
+                args.push('--terse');
+                args.push('--fields');
+                //args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS, CHAN');
+                args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS');
+                args.push('device');
+                args.push('wifi');
+                args.push('list');
 
-        if (!!this.interface) {
-            args.push('ifname');
-            args.push(this.interface);
+                if (!!this.interface) {
+                    args.push('ifname');
+                    args.push(this.interface);
+                }
+                break;
+            case this.comamndTypes.EXIST:
+                args.push('connection');
+                args.push('list');
+                break;
         }
         return args;
     }

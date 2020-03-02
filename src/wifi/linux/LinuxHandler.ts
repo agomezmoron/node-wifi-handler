@@ -3,7 +3,7 @@
  * Author: Alejandro Gomez @agomezmoron
  */
 
-import WifiHandler from "../wifi-handler";
+import WifiHandler from "../Wifi-Handler";
 import Network from "../Network";
 import NetworkUtils from "../util/NetworkUtils";
 

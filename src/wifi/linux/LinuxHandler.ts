@@ -41,7 +41,7 @@ class LinuxHandler extends WifiHandler {
             case this.comamndTypes.SCAN:
                 args.push('--terse');
                 args.push('--fields');
-                //args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS, CHAN');
+                //args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS,CHAN');
                 args.push('ACTIVE,SSID,BSSID,MODE,FREQ,SIGNAL,SECURITY,WPA-FLAGS,RSN-FLAGS');
                 args.push('device');
                 args.push('wifi');

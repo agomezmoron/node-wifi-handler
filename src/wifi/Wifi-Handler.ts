@@ -48,8 +48,6 @@ abstract class WifiHandler {
         });
     }
 
-    async
-
     /**
      * Command for the given option.
      */
@@ -64,7 +62,7 @@ abstract class WifiHandler {
      * It parses the scan command output.
      * @param str with the output.
      */
-    abstract parseScanOutput(str): Network[];
+    protected abstract parseScanOutput(str): Network[];
 
     /**
      * Method to wrap the command execution.

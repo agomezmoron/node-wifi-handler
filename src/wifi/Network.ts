@@ -10,7 +10,7 @@ class Network {
     bssid : string;
     ssid : string;
     mode : string;
-    channel: number;
+    //channel: number;
     frecuency : number;
     signalLevel : number;
     quality: number;

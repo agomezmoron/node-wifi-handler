@@ -7,8 +7,8 @@
  * Main class to expose the plugin utilities.
  * @description Main class to expose the plugin utilities.
  */
-import WifiHandler from "./wifi/wifi-handler";
-import WifiFactory from "./wifi/util/wifi-factory";
+import WifiHandler from "./wifi/Wifi-Handler";
+import WifiFactory from "./wifi/util/Wifi-Factory";
 
 const WifiWrapper = {
 

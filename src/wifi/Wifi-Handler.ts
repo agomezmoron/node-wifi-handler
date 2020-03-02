@@ -5,6 +5,8 @@
 
 import * as child from 'child_process';
 import Network from "./Network";
+import ParserFactory from "./util/Parser-Factory";
+import Parser from "./Parser"
 
 /**
  * Interface that every handler should implement.
@@ -12,12 +14,14 @@ import Network from "./Network";
  */
 abstract class WifiHandler {
 
-    protected comamndTypes = {
-        SCAN : 'scan',
-        EXIST : 'exist'
+    protected commandTypes = {
+        SCAN: 'scan',
+        SAVED: 'saved',
+        DELETE: 'delete'
     };
     protected interface: string = undefined; // by default
     protected debug: boolean = false; // by default
+    protected parser: Parser = null;
 
     /**
      * Parametrized constructor.
@@ -30,6 +34,7 @@ abstract class WifiHandler {
         debug: boolean
     }) {
         this.configure(config);
+        this.parser = ParserFactory.getInstance();
     }
 
     /**
@@ -37,9 +42,9 @@ abstract class WifiHandler {
      */
     async scan(): Promise<Network[]> {
         return new Promise<Network[]>((resolve, reject) => {
-            this.execute(this.getCommand(this.comamndTypes.SCAN), this.getArgs(this.comamndTypes.SCAN))
+            this.execute(this.getCommand(this.commandTypes.SCAN), this.getArgs(this.commandTypes.SCAN))
                 .then(result => {
-                    resolve(this.parseScanOutput(result));
+                    resolve(this.parser.parseScan(result, this.getCurrentConfig()));
                 })
                 .catch(err => {
                     this.showDebug(err);
@@ -49,20 +54,78 @@ abstract class WifiHandler {
     }
 
     /**
-     * Command for the given option.
+     * It retrieves all the saved networks.
      */
-    protected abstract getCommand(option : string): string;
+    async getSavedNetworks(): Promise<Network[]> {
+        return new Promise<Network[]>((resolve, reject) => {
+            this.execute(this.getCommand(this.commandTypes.SAVED), this.getArgs(this.commandTypes.SAVED))
+                .then(result => {
+                    resolve(this.parser.parseSaved(result, this.getCurrentConfig()));
+                })
+                .catch(err => {
+                    this.showDebug(err);
+                    reject([]);
+                });
+        });
+    }
+
+    /**
+     * It checks if a network exists by ssid.
+     * @param ssid to check if it exists.
+     */
+    async existsNetwork(ssid): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.getSavedNetworks().then(networks => {
+                resolve(networks.find(network => network.ssid == ssid) !== undefined);
+            }).catch(err => {
+                reject(false);
+            });
+        });
+    }
+
+    /**
+     * It deletes a network - if exists.
+     * @param ssid to be deleted.
+     */
+    async deleteNetwork(ssid): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.existsNetwork(ssid).then(exists => {
+                if (exists) {
+                    this.execute(this.getCommand(this.commandTypes.DELETE), this.getArgs(this.commandTypes.DELETE, { ssid: ssid }))
+                        .then(output =>  {
+                           resolve();
+                        })
+                        .catch( err => {
+                            reject();
+                        })
+                } else {
+                    resolve();
+                }
+            }).catch(err => {
+                reject(false);
+            });
+        });
+    }
+
+    /**
+     * Command for the given option.
+     * @param option to get the specific command.
+     */
+    protected abstract getCommand(option: string): string;
 
     /**
      * Args for the given option.
+     * @param option to get the specific Args.
+     * @param config extra parameters.
      */
-    protected abstract getArgs(option : string): string[];
+    protected abstract getArgs(option: string, config?): string[];
 
     /**
-     * It parses the scan command output.
-     * @param str with the output.
+     * It retrieves all the current config of the handler as an Object.
      */
-    protected abstract parseScanOutput(str): Network[];
+    private getCurrentConfig() {
+        return {interface: this.interface, debug: this.debug};
+    }
 
     /**
      * Method to wrap the command execution.

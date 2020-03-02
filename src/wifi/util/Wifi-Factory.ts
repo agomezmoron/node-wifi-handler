@@ -7,26 +7,30 @@ import WifiHandler from "../Wifi-Handler";
 import LinuxHandler from "../linux/LinuxHandler";
 
 /**
- * Main class to expose the plugin utilities.
- * @description Main class to expose the plugin utilities.
+ * Factory to build WifiHandlers.
+ * @description Factory to build WifiHandlers.
  */
 abstract class WifiFactory {
 
-  public static getInstance(config?) : WifiHandler {
-    let instance : WifiHandler = null;
+    /**
+     * Method to get an instance of WifiHandler depending on the OS.
+     * @param config optional config about debug or interface name.
+     */
+    public static getInstance(config?): WifiHandler {
+        let instance: WifiHandler = null;
 
-    switch (process.platform) {
-        case 'linux':
-          instance = new LinuxHandler(config);
-          break;
-        case 'darwin':
-          // macOS
-          break;
-        case 'win32':
-          break;
+        switch (process.platform) {
+            case 'linux':
+                instance = new LinuxHandler(config);
+                break;
+            case 'darwin':
+                // macOS
+                break;
+            case 'win32':
+                break;
+        }
+        return instance;
     }
-    return instance;
-  }
 
 }
 

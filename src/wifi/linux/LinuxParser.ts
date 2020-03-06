@@ -78,16 +78,6 @@ class LinuxParser implements Parser{
         return networks;
     }
 
-    /**
-     * Custom parser for Linux for the created output.
-     * @param input
-     * @param config
-     */
-    parseCreated(input, config?): Network {
-        console.log(input);
-        return null;
-    }
-
 }
 
 export default LinuxParser;

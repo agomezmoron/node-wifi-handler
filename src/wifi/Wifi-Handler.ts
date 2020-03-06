@@ -115,8 +115,8 @@ abstract class WifiHandler {
      * It creates a network (but if shouldn't exists!).
      * @param profile to be created.
      */
-    async createNetwork(profile: WifiProfile): Promise<Network> {
-        return new Promise<Network>((resolve, reject) => {
+    async createNetwork(profile: WifiProfile): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
                 .then(exists => {
                     if (exists) {
@@ -125,17 +125,28 @@ abstract class WifiHandler {
                     } else {
                         this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, {profile: profile}))
                             .then(result => {
-                                resolve(this.parser.parseCreated(result, this.getCurrentConfig()));
+                                // once connected, the profile should exist
+                                this.existsNetwork(profile.ssid)
+                                    .then(exists => {
+                                        if (exists) {
+                                            resolve(true);
+                                        } else {
+                                            reject(false);
+                                        }
+                                    })
+                                    .catch(err => {
+                                        reject(false);
+                                    })
                             })
                             .catch(err => {
                                 this.showDebug(err);
-                                resolve(null);
+                                resolve(false);
                             });
                     }
                 })
                 .catch(err => {
                     this.showDebug(err);
-                    resolve(null);
+                    resolve(false);
                 });
         });
     }

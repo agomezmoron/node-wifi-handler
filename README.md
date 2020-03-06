@@ -54,4 +54,4 @@ Please feel free to provide a pull request or create any needed issue.
 
 ## License
 
-[MIT](/License)
+[MIT](/LICENSE)

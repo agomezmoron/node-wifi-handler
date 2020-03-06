@@ -6,7 +6,8 @@
 import * as child from 'child_process';
 import Network from "./Network";
 import ParserFactory from "./util/Parser-Factory";
-import Parser from "./Parser"
+import Parser from "./Parser";
+import WifiProfile from "./profiles/WifiProfile";
 
 /**
  * Interface that every handler should implement.
@@ -17,7 +18,8 @@ abstract class WifiHandler {
     protected commandTypes = {
         SCAN: 'scan',
         SAVED: 'saved',
-        DELETE: 'delete'
+        DELETE: 'delete',
+        CREATE: 'create'
     };
     protected interface: string = undefined; // by default
     protected debug: boolean = false; // by default
@@ -60,7 +62,7 @@ abstract class WifiHandler {
         return new Promise<Network[]>((resolve, reject) => {
             this.execute(this.getCommand(this.commandTypes.SAVED), this.getArgs(this.commandTypes.SAVED))
                 .then(result => {
-                    resolve(this.parser.parseSaved(result, this.getCurrentConfig()));
+                    resolve(this.parser.parseSavedNetworks(result, this.getCurrentConfig()));
                 })
                 .catch(err => {
                     this.showDebug(err);
@@ -91,19 +93,50 @@ abstract class WifiHandler {
         return new Promise<void>((resolve, reject) => {
             this.existsNetwork(ssid).then(exists => {
                 if (exists) {
-                    this.execute(this.getCommand(this.commandTypes.DELETE), this.getArgs(this.commandTypes.DELETE, { ssid: ssid }))
-                        .then(output =>  {
-                           resolve();
+                    this.execute(this.getCommand(this.commandTypes.DELETE), this.getArgs(this.commandTypes.DELETE, {ssid: ssid}))
+                        .then(output => {
+                            resolve();
                         })
-                        .catch( err => {
-                            reject();
+                        .catch(err => {
+                            this.showDebug(err);
+                            reject(err);
                         })
                 } else {
                     resolve();
                 }
             }).catch(err => {
+                this.showDebug(err);
                 reject(false);
             });
+        });
+    }
+
+    /**
+     * It creates a network (but if shouldn't exists!).
+     * @param profile to be created.
+     */
+    async createNetwork(profile: WifiProfile): Promise<Network> {
+        return new Promise<Network>((resolve, reject) => {
+            this.existsNetwork(profile.ssid)
+                .then(exists => {
+                    if (exists) {
+                        this.showDebug('The network exists and it shouldn\'t');
+                        reject(null);
+                    } else {
+                        this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, {profile: profile}))
+                            .then(result => {
+                                resolve(this.parser.parseCreated(result, this.getCurrentConfig()));
+                            })
+                            .catch(err => {
+                                this.showDebug(err);
+                                resolve(null);
+                            });
+                    }
+                })
+                .catch(err => {
+                    this.showDebug(err);
+                    resolve(null);
+                });
         });
     }
 
@@ -136,6 +169,7 @@ abstract class WifiHandler {
         const exec = child.execFile;
         const envVars = this.getEnvVars();
         return new Promise((resolve, reject) => {
+            this.showDebug(command + ' ' + args.join(' '));
             exec(command, args, envVars, (error, stdout, stderr) => {
                 if (error) {
                     reject(error);

@@ -19,7 +19,14 @@ interface Parser {
      * @param input to be parsed.
      * @param config any extra needed configuration.
      */
-    parseSaved(input, config?): Network[]
+    parseSavedNetworks(input, config?): Network[];
+
+    /**
+     * Custom parse for the created networks utility.
+     * @param input to be parsed.
+     * @param config any extra needed configuration.
+     */
+    parseCreated(input, config?): Network;
 
 }
 

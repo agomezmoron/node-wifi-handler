@@ -19,8 +19,8 @@ const WifiWrapper = {
      *  - debug: true if you want to enable the debug mode.
      */
     getWifiHandler(config?: {
-        interface: string,
-        debug: boolean
+        interface?: string,
+        debug?: boolean
     }): WifiHandler {
         return WifiFactory.getInstance(config);
     }
@@ -28,3 +28,13 @@ const WifiWrapper = {
 };
 
 export default WifiWrapper;
+
+/**
+ * Example of a WPA Personal:
+ *
+ * const handler: WifiHandler = WifiWrapper.getWifiHandler( {debug: true });
+ * const profile: WifiProfile = new WPAPersonalProfile('SSID', 'PASSWORD');
+ * handler.createNetwork(profile)
+ *  .then(output => console.log('OK: '+output))
+ *  .catch(err => console.error('ERROR:'+err));
+ */

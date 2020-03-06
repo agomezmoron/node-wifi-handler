@@ -9,6 +9,10 @@ abstract class WifiProfile {
 
     ssid : string;
 
+    constructor(ssid : string) {
+        this.ssid = ssid;
+    }
+
 }
 
 export default WifiProfile;

@@ -52,10 +52,6 @@ class LinuxParser {
         }
         return networks;
     }
-    parseCreated(input, config) {
-        console.log(input);
-        return null;
-    }
 }
 exports.default = LinuxParser;
 //# sourceMappingURL=LinuxParser.js.map

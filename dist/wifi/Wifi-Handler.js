@@ -110,17 +110,28 @@ class WifiHandler {
                     else {
                         this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, { profile: profile }))
                             .then(result => {
-                            resolve(this.parser.parseCreated(result, this.getCurrentConfig()));
+                            this.existsNetwork(profile.ssid)
+                                .then(exists => {
+                                if (exists) {
+                                    resolve(true);
+                                }
+                                else {
+                                    reject(false);
+                                }
+                            })
+                                .catch(err => {
+                                reject(false);
+                            });
                         })
                             .catch(err => {
                             this.showDebug(err);
-                            resolve(null);
+                            resolve(false);
                         });
                     }
                 })
                     .catch(err => {
                     this.showDebug(err);
-                    resolve(null);
+                    resolve(false);
                 });
             });
         });

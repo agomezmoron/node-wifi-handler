@@ -5,13 +5,18 @@ import WifiProfile from "./WifiProfile";
  * Author: Alejandro Gomez @agomezmoron
  */
 
-class WPAPersonalProfile extends WifiProfile{
+class WPAPersonalProfile extends WifiProfile {
 
     password: string;
 
-    constructor(ssid : string, password: string) {
+    constructor(ssid : string) {
         super(ssid);
-        this.password = password;
+    }
+
+    applyConfig(config: {
+        password: string
+    }) {
+        this.password = config.password;
     }
 
 }

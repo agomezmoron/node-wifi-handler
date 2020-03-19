@@ -4,5 +4,6 @@ declare class LinuxHandler extends WifiHandler {
     protected getCommand(option: string): string;
     protected getArgs(option: string, config?: any): string[];
     private getCreateArgs;
+    private getWPASupplicantConf;
 }
 export default LinuxHandler;

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Wifi_Handler_1 = __importDefault(require("../Wifi-Handler"));
 const WPAPersonalProfile_1 = __importDefault(require("../profiles/WPAPersonalProfile"));
+const WPAEnterpriseProfile_1 = __importDefault(require("../profiles/WPAEnterpriseProfile"));
 class LinuxHandler extends Wifi_Handler_1.default {
     constructor(config) {
         super(config);
@@ -69,7 +70,11 @@ class LinuxHandler extends Wifi_Handler_1.default {
                 args.push(profile.password);
             }
         }
+        else if (profile instanceof WPAEnterpriseProfile_1.default) {
+        }
         return args;
+    }
+    getWPASupplicantConf(profile) {
     }
 }
 exports.default = LinuxHandler;

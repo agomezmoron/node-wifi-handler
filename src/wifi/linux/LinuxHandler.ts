@@ -6,6 +6,7 @@
 import WifiHandler from "../Wifi-Handler";
 import WifiProfile from "../profiles/WifiProfile";
 import WPAPersonalProfile from "../profiles/WPAPersonalProfile";
+import WPAEnterpriseProfile from "../profiles/WPAEnterpriseProfile";
 
 /**
  * Wifi handler for Linux OS.
@@ -87,8 +88,15 @@ class LinuxHandler extends WifiHandler {
                 args.push('password');
                 args.push(profile.password);
             }
+        } else if (profile instanceof WPAEnterpriseProfile) {
+            // TODO: complete here
+
         }
         return args;
+    }
+
+    private getWPASupplicantConf(profile: WPAEnterpriseProfile) {
+
     }
 
 }

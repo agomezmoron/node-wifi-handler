@@ -20,7 +20,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const child = __importStar(require("child_process"));
-const Parser_Factory_1 = __importDefault(require("./util/Parser-Factory"));
+const ParserFactory_1 = __importDefault(require("./util/ParserFactory"));
 class WifiHandler {
     constructor(config) {
         this.commandTypes = {
@@ -33,7 +33,7 @@ class WifiHandler {
         this.debug = false;
         this.parser = null;
         this.configure(config);
-        this.parser = Parser_Factory_1.default.getInstance();
+        this.parser = ParserFactory_1.default.getInstance();
     }
     scan() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -5,7 +5,7 @@
 
 import * as child from 'child_process';
 import Network from "./Network";
-import ParserFactory from "./util/Parser-Factory";
+import ParserFactory from "./util/ParserFactory";
 import Parser from "./Parser";
 import WifiProfile from "./profiles/WifiProfile";
 

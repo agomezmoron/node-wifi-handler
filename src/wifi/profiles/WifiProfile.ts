@@ -7,11 +7,16 @@ import WifiHandler from "../Wifi-Handler";
 
 abstract class WifiProfile {
 
+    static readonly PERSONAL: string = 'PERSONAL';
+    static readonly ENTERPRISE: string = 'ENTERPRISE';
+
     ssid : string;
 
     constructor(ssid : string) {
         this.ssid = ssid;
     }
+
+    abstract applyConfig(config);
 
 }
 

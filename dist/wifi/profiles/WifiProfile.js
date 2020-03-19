@@ -5,5 +5,7 @@ class WifiProfile {
         this.ssid = ssid;
     }
 }
+WifiProfile.PERSONAL = 'PERSONAL';
+WifiProfile.ENTERPRISE = 'ENTERPRISE';
 exports.default = WifiProfile;
 //# sourceMappingURL=WifiProfile.js.map

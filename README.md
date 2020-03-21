@@ -22,7 +22,7 @@ Depending on the OS System, some native tools are used:
 
 ---
 
-## Install (pending to publish the library in npm)
+## Install
 
 ```bash
 # Use as a module

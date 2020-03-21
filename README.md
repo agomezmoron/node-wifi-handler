@@ -17,7 +17,7 @@ Nowadays it's Work In Progress but
 
 
 Depending on the OS System, some native tools are used:
-* Linux: Uses **[nmcli](https://developer.gnome.org/NetworkManager/stable/nmcli.html)**.
+* Linux: Uses **[nmcli](https://developer.gnome.org/NetworkManager/stable/nmcli.html)** and **[wpa_supplicant](https://linux.die.net/man/5/wpa_supplicant.conf)**.
 
 
 ---

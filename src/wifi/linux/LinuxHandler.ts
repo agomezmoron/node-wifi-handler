@@ -7,6 +7,9 @@ import WifiHandler from "../Wifi-Handler";
 import WifiProfile from "../profiles/WifiProfile";
 import WPAPersonalProfile from "../profiles/WPAPersonalProfile";
 import WPAEnterpriseProfile from "../profiles/WPAEnterpriseProfile";
+import WPAEAPPEAPProfile from "../profiles/WPAEAPPEAPProfile"
+import WPAEAPTTLSProfile from "../profiles/WPAEAPTTLSProfile"
+import FileSystemUtil from "../util/FileSystemUtil"
 
 /**
  * Wifi handler for Linux OS.
@@ -88,17 +91,84 @@ class LinuxHandler extends WifiHandler {
                 args.push('password');
                 args.push(profile.password);
             }
-        } else if (profile instanceof WPAEnterpriseProfile) {
-            // TODO: complete here
-
         }
         return args;
     }
 
-    private getWPASupplicantConf(profile: WPAEnterpriseProfile) {
+    /**
+     * Method that builds all the wpa_supplicant configuration.
+     * @param profile
+     */
+    private getWPASupplicantConf(profile: WPAEnterpriseProfile): string {
+        // https://linux.die.net/man/5/wpa_supplicant.conf
+        let conf: string = "network={\n" +
+            "  ssid=\"" + profile.ssid + "\"\n" +
+            "  priority=1\n";
+        if (profile instanceof WPAEAPPEAPProfile || profile instanceof WPAEAPTTLSProfile) {
 
+            conf += "  key_mgmt=WPA-EAP\n";
+            if (profile instanceof WPAEAPPEAPProfile) {
+                const castedProfile: WPAEAPPEAPProfile = profile;
+                conf += "  identity=\"" + castedProfile.username + "\"\n" +
+                    "  password=\"" + castedProfile.password + "\"\n" +
+                    "  eap=PEAP\n";
+            } else {
+                const castedProfile: WPAEAPTTLSProfile = profile;
+                conf += "  identity=\"" + castedProfile.username + "\"\n" +
+                    "  password=\"" + castedProfile.password + "\"\n" +
+                    "  eap=TLS\n";
+            }
+            conf += "  pairwise=CCMP\n" + this.getWPASupplicantCAParts(profile) + "\n" +
+                "  altsubject_match=\"" + profile.serverNames.join(';') + "\"\n" +
+                "  phase2=\"auth=" + profile.authenticationMethod + "\"\n" +
+                "  anonymous_identity=\"" + profile.anonymous + "\"\n";
+        } else {
+            // EAP 13: TODO
+        }
+        conf += "}";
+        return conf;
     }
 
+    /**
+     * It builds all the CA part related to multiple CA (if exists).
+     * @param profile to be used.
+     */
+    private getWPASupplicantCAParts(profile: WPAEnterpriseProfile): string {
+        let caParts = '';
+        let cont = 1;
+        profile.caCertificates.forEach(caPath => {
+            if (cont > 1) {
+                caParts += "\nca_cert" + cont + "=\"" + caPath;
+            } else {
+                caParts += "ca_cert=\"" + caPath;
+            }
+            cont++;
+        });
+        return caParts;
+    }
+
+    /**
+     * In this handler we overrides this function to create an enterprise network.
+     * @param profile
+     */
+    async createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.existsNetwork(profile.ssid)
+                .then(exists => {
+                    if (exists) {
+                        this.showDebug('The network exists and it shouldn\'t');
+                        reject(null);
+                    } else {
+                        const filePath = FileSystemUtil.writeInATempFile(this.getWPASupplicantConf(profile), 'conf');
+                        //TODO: perform the wpa_supplicant command
+                    }
+                })
+                .catch(err => {
+                    this.showDebug(err);
+                    resolve(false);
+                });
+        });
+    }
 }
 
 export default LinuxHandler;

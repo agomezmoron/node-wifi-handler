@@ -18,6 +18,9 @@ class WPAEnterpriseProfile extends WifiProfile {
 
     anonymous: string = '';
 
+    /**
+     * Paths to the certificate files.
+     */
     caCertificates: string [] = [];
 
     /**

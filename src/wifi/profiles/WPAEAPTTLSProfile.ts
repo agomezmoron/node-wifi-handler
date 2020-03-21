@@ -7,9 +7,15 @@ import WPAEnterpriseProfile from "./WPAEnterpriseProfile";
 
 class WPAEAPTTLSProfile extends WPAEnterpriseProfile {
 
-    constructor(ssid: string) {
+    username: string;
+
+    password: string;
+
+    constructor(ssid: string, username: string, password: string) {
         super(ssid);
         this.eapType = 21;
+        this.username = username;
+        this.password = password;
     }
 
 }

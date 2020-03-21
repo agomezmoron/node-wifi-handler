@@ -8,6 +8,11 @@ import Network from "./Network";
 import ParserFactory from "./util/ParserFactory";
 import Parser from "./Parser";
 import WifiProfile from "./profiles/WifiProfile";
+import WPAPersonalProfile from "./profiles/WPAPersonalProfile";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
+import WPAEnterpriseProfile from "./profiles/WPAEnterpriseProfile";
 
 /**
  * Interface that every handler should implement.
@@ -115,6 +120,7 @@ abstract class WifiHandler {
      * It creates a network (but if shouldn't exists!).
      * @param profile to be created.
      */
+
     async createNetwork(profile: WifiProfile): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
@@ -123,25 +129,40 @@ abstract class WifiHandler {
                         this.showDebug('The network exists and it shouldn\'t');
                         reject(null);
                     } else {
-                        this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, {profile: profile}))
-                            .then(result => {
-                                // once connected, the profile should exist
-                                this.existsNetwork(profile.ssid)
-                                    .then(exists => {
-                                        if (exists) {
-                                            resolve(true);
-                                        } else {
+                        if (this.isAnPersonalProfile(profile)) {
+                            this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, {profile: profile}))
+                                .then(result => {
+                                    // once connected, the profile should exist
+                                    this.existsNetwork(profile.ssid)
+                                        .then(exists => {
+                                            if (exists) {
+                                                resolve(true);
+                                            } else {
+                                                reject(false);
+                                            }
+                                        })
+                                        .catch(err => {
                                             reject(false);
-                                        }
-                                    })
-                                    .catch(err => {
-                                        reject(false);
-                                    })
+                                        })
+                                })
+                                .catch(err => {
+                                    this.showDebug(err);
+                                    resolve(false);
+                                });
+                        } else {
+                            const castedProfile : WPAEnterpriseProfile = profile;
+                            this.createAnEnterpiseNetwork(castedProfile).then(created => {
+                                if (created) {
+                                    resolve(true);
+                                } else {
+                                    reject(false);
+                                }
                             })
                             .catch(err => {
                                 this.showDebug(err);
-                                resolve(false);
+                                reject(false);
                             });
+                        }
                     }
                 })
                 .catch(err => {
@@ -149,6 +170,20 @@ abstract class WifiHandler {
                     resolve(false);
                 });
         });
+    }
+
+    /**
+     * This is a custom method to be implented by its children to create an enterprise network.
+     * @param profile gets the wifi profile to be created.
+     * @return a Promise<boolean> where the promisse should ALWAYS be resolved as true if the network was created.
+     */
+    async abstract createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean>;
+
+    /**
+     * It checks if it's a Personal profile or not.
+     */
+    protected isAnPersonalProfile(profile: WifiProfile): boolean {
+        return profile instanceof WPAPersonalProfile;
     }
 
     /**
@@ -176,7 +211,7 @@ abstract class WifiHandler {
      * @param command to be executed.
      * @param args of the command.
      */
-    private execute(command: string, args: string[]): Promise<any> {
+    protected execute(command: string, args: string[]): Promise<any> {
         const exec = child.execFile;
         const envVars = this.getEnvVars();
         return new Promise((resolve, reject) => {
@@ -194,7 +229,7 @@ abstract class WifiHandler {
      * It showes the given message if it's in debug mode.
      * @param msg to be shown.
      */
-    private showDebug(msg: string) {
+    protected showDebug(msg: string) {
         if (this.debug) {
             console.warn(msg);
         }
@@ -204,7 +239,7 @@ abstract class WifiHandler {
      * It returns to the process.enreturn new Promise((resolve, reject) => {
         });v the ones we want.
      */
-    private getEnvVars() {
+    protected getEnvVars() {
         return Object.assign(process.env, {
             LANG: 'en_US.UTF-8',
             LC_ALL: 'en_US.UTF-8',

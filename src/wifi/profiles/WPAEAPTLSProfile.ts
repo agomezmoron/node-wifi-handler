@@ -7,6 +7,9 @@ import WPAEnterpriseProfile from "./WPAEnterpriseProfile";
 
 class WPAEAPTLSProfile extends WPAEnterpriseProfile {
 
+    /**
+     * Path to the certificate.
+     */
     clientCertificate: string;
 
     passphrase: string;

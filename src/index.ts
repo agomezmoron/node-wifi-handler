@@ -26,15 +26,3 @@ const WifiWrapper = {
     }
 
 };
-
-export default WifiWrapper;
-
-/**
- * Example of a WPA Personal:
- *
- * const handler: WifiHandler = WifiWrapper.getWifiHandler( {debug: true });
- * const profile: WifiProfile = new WifiProfileFactory.getInstance({ ssid: 'SSID', type: WifiProfile.PERSONAL, password: 'PASSWORD'});
- * handler.createNetwork(profile)
- *  .then(output => console.log('OK: '+output))
- *  .catch(err => console.error('ERROR:'+err));
- */

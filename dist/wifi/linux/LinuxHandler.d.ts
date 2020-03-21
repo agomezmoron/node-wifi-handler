@@ -5,8 +5,11 @@ declare class LinuxHandler extends WifiHandler {
     protected getCommand(option: string): string;
     protected getArgs(option: string, config?: any): string[];
     private getCreateArgs;
+    private getWifiInterfaceName;
     private getWPASupplicantConf;
-    private getWPASupplicantCAParts;
+    private: any;
+    getWPASupplicantCAParts(profile: WPAEnterpriseProfile): string;
+    async: any;
     createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean>;
 }
 export default LinuxHandler;

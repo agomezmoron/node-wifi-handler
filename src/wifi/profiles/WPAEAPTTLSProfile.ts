@@ -20,4 +20,4 @@ class WPAEAPTTLSProfile extends WPAEnterpriseProfile {
 
 }
 
-export default WPAEAPTLSProfile;
+export default WPAEAPTTLSProfile;

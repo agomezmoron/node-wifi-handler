@@ -1,6 +1,7 @@
 import WPAEnterpriseProfile from "./WPAEnterpriseProfile";
 declare class WPAEAPTLSProfile extends WPAEnterpriseProfile {
     clientCertificate: string;
+    privateClientKey: string;
     passphrase: string;
     constructor(ssid: any);
     applyConfig(config: {
@@ -9,6 +10,7 @@ declare class WPAEAPTLSProfile extends WPAEnterpriseProfile {
         caCertificates: string[];
         authenticationMethod?: string;
         clientCertificate: string;
+        privateClientKey: string;
         passphrase: string;
     }): void;
 }

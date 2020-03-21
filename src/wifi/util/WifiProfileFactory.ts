@@ -27,13 +27,13 @@ abstract class WifiProfileFactory {
      *     passphrase: [Optional (but mandatory if clientCertificate is given) of the clientCertificate
      * }
      */
-    public static getInstance(config: {
+    public static getInstance (config: {
         ssid: string,
         username?: string, // ENTERPRISE
         password?: string,
         type: string, // PERSONAL or ENTERPRISE
         eapType?: number // only for ENTERPRISE
-        caCertificates: string[], // ENTERPRISE
+        caCertificates?: string[], // ENTERPRISE
         serverNames?: string, // ENTERPRISE
         anonymous?: string, // ENTERPRISE
         clientCertificate?: string, // ENTERPRISE
@@ -54,7 +54,6 @@ abstract class WifiProfileFactory {
                     default:
                         instance = new WPAEAPTTLSProfile(config.ssid, config.username, config.password);
                         break;
-
                 }
                 instance.applyConfig(config);
                 break;

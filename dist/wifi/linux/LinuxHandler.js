@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,6 +7,7 @@ const Wifi_Handler_1 = __importDefault(require("../Wifi-Handler"));
 const WPAPersonalProfile_1 = __importDefault(require("../profiles/WPAPersonalProfile"));
 const WPAEAPPEAPProfile_1 = __importDefault(require("../profiles/WPAEAPPEAPProfile"));
 const WPAEAPTTLSProfile_1 = __importDefault(require("../profiles/WPAEAPTTLSProfile"));
+const WPAEAPTLSProfile_1 = __importDefault(require("../profiles/WPAEAPTLSProfile"));
 const FileSystemUtil_1 = __importDefault(require("../util/FileSystemUtil"));
 class LinuxHandler extends Wifi_Handler_1.default {
     constructor(config) {
@@ -83,6 +75,17 @@ class LinuxHandler extends Wifi_Handler_1.default {
         }
         return args;
     }
+    getWifiInterfaceName() {
+        return new Promise((resolve, reject) => {
+            this.execute('iw', ['dev', '|', 'grep', '-Po', "\'^\\sInterface\\s\\K.*$\'"])
+                .then(name => {
+                resolve(name);
+            })
+                .catch(err => {
+                reject(err);
+            });
+        });
+    }
     getWPASupplicantConf(profile) {
         let conf = "network={\n" +
             "  ssid=\"" + profile.ssid + "\"\n" +
@@ -106,7 +109,17 @@ class LinuxHandler extends Wifi_Handler_1.default {
                 "  phase2=\"auth=" + profile.authenticationMethod + "\"\n" +
                 "  anonymous_identity=\"" + profile.anonymous + "\"\n";
         }
-        else {
+        else if (profile instanceof WPAEAPTLSProfile_1.default) {
+            const castedProfile = profile;
+            conf += "  key_mgmt=WPA-EAP \n" +
+                "  anonymous_identity=\"" + profile.anonymous + "\"\n" +
+                "  eap=TLS\n +" +
+                "  pairwise=CCMP\n" + this.getWPASupplicantCAParts(profile) + "\n" +
+                "  altsubject_match=\"" + profile.serverNames.join(';') + "\"\n" +
+                "  phase2=\"auth=" + profile.authenticationMethod + "\"\n" +
+                "  client_cert=\"" + castedProfile.clientCertificate + "\"\n" +
+                "  private_key=\"" + castedProfile.privateClientKey + "\"\n" +
+                "  private_key_passwd=\"" + castedProfile.passphrase + "\"\n";
         }
         conf += "}";
         return conf;
@@ -126,22 +139,33 @@ class LinuxHandler extends Wifi_Handler_1.default {
         return caParts;
     }
     createAnEnterpiseNetwork(profile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                this.existsNetwork(profile.ssid)
-                    .then(exists => {
-                    if (exists) {
-                        this.showDebug('The network exists and it shouldn\'t');
-                        reject(null);
-                    }
-                    else {
-                        const filePath = FileSystemUtil_1.default.writeInATempFile(this.getWPASupplicantConf(profile), 'conf');
-                    }
-                })
-                    .catch(err => {
-                    this.showDebug(err);
-                    resolve(false);
-                });
+        return new Promise((resolve, reject) => {
+            this.existsNetwork(profile.ssid)
+                .then(exists => {
+                if (exists) {
+                    this.showDebug('The network exists and it shouldn\'t');
+                    reject(null);
+                }
+                else {
+                    const filePath = FileSystemUtil_1.default.writeInATempFile(this.getWPASupplicantConf(profile), 'conf');
+                    this.getWifiInterfaceName()
+                        .then(interfaceName => {
+                        this.execute('wpa_supplicant', ['-B', '-i', 'interface', interfaceName, '-c', filePath])
+                            .then(result => {
+                            resolve(true);
+                        })
+                            .catch(err => {
+                            reject(false);
+                        });
+                    })
+                        .catch(err => {
+                        reject(false);
+                    });
+                }
+            })
+                .catch(err => {
+                this.showDebug(err);
+                resolve(false);
             });
         });
     }

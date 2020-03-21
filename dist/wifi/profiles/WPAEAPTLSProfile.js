@@ -12,6 +12,7 @@ class WPAEAPTLSProfile extends WPAEnterpriseProfile_1.default {
     applyConfig(config) {
         super.applyConfig(config);
         this.clientCertificate = config.clientCertificate;
+        this.privateClientKey = config.privateClientKey;
         this.passphrase = config.passphrase;
     }
 }

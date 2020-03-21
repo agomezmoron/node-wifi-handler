@@ -9,6 +9,7 @@ import WPAPersonalProfile from "../profiles/WPAPersonalProfile";
 import WPAEnterpriseProfile from "../profiles/WPAEnterpriseProfile";
 import WPAEAPPEAPProfile from "../profiles/WPAEAPPEAPProfile"
 import WPAEAPTTLSProfile from "../profiles/WPAEAPTTLSProfile"
+import WPAEAPTLSProfile from "../profiles/WPAEAPTLSProfile"
 import FileSystemUtil from "../util/FileSystemUtil"
 
 /**
@@ -80,6 +81,10 @@ class LinuxHandler extends WifiHandler {
         return args;
     }
 
+    /**
+     * It gets the create args (for the PERSONAL) type.
+     * @param profile to build the args.
+     */
     private getCreateArgs(profile: WifiProfile): string[] {
         const args = [];
         if (profile instanceof WPAPersonalProfile) {
@@ -96,8 +101,23 @@ class LinuxHandler extends WifiHandler {
     }
 
     /**
+     * It gets the wifi interface name.
+     */
+    private getWifiInterfaceName(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.execute('iw', ['dev', '|', 'grep', '-Po', "\'^\\sInterface\\s\\K.*$\'"])
+                .then(name => {
+                    resolve(name);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    /**
      * Method that builds all the wpa_supplicant configuration.
-     * @param profile
+     * @param profile to build the wpa_supplicant configuration.
      */
     private getWPASupplicantConf(profile: WPAEnterpriseProfile): string {
         // https://linux.die.net/man/5/wpa_supplicant.conf
@@ -105,7 +125,6 @@ class LinuxHandler extends WifiHandler {
             "  ssid=\"" + profile.ssid + "\"\n" +
             "  priority=1\n";
         if (profile instanceof WPAEAPPEAPProfile || profile instanceof WPAEAPTTLSProfile) {
-
             conf += "  key_mgmt=WPA-EAP\n";
             if (profile instanceof WPAEAPPEAPProfile) {
                 const castedProfile: WPAEAPPEAPProfile = profile;
@@ -122,9 +141,20 @@ class LinuxHandler extends WifiHandler {
                 "  altsubject_match=\"" + profile.serverNames.join(';') + "\"\n" +
                 "  phase2=\"auth=" + profile.authenticationMethod + "\"\n" +
                 "  anonymous_identity=\"" + profile.anonymous + "\"\n";
-        } else {
+        } else if (profile instanceof WPAEAPTLSProfile) {
+            const castedProfile: WPAEAPTLSProfile = profile;
             // EAP 13: TODO
+            conf += "  key_mgmt=WPA-EAP \n" +
+                "  anonymous_identity=\"" + profile.anonymous + "\"\n" +
+                "  eap=TLS\n +" +
+                "  pairwise=CCMP\n" + this.getWPASupplicantCAParts(profile) + "\n" +
+                "  altsubject_match=\"" + profile.serverNames.join(';') + "\"\n" +
+                "  phase2=\"auth=" + profile.authenticationMethod + "\"\n" +
+                "  client_cert=\"" + castedProfile.clientCertificate + "\"\n" +
+                "  private_key=\"" + castedProfile.privateClientKey + "\"\n" +
+                "  private_key_passwd=\"" + castedProfile.passphrase + "\"\n";
         }
+
         conf += "}";
         return conf;
     }
@@ -133,7 +163,13 @@ class LinuxHandler extends WifiHandler {
      * It builds all the CA part related to multiple CA (if exists).
      * @param profile to be used.
      */
-    private getWPASupplicantCAParts(profile: WPAEnterpriseProfile): string {
+    private
+
+    getWPASupplicantCAParts(profile
+                                :
+                                WPAEnterpriseProfile
+    ):
+        string {
         let caParts = '';
         let cont = 1;
         profile.caCertificates.forEach(caPath => {
@@ -149,9 +185,15 @@ class LinuxHandler extends WifiHandler {
 
     /**
      * In this handler we overrides this function to create an enterprise network.
-     * @param profile
+     * @param profile WPAEnterpriseProfile to be configured.
      */
-    async createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean> {
+    async
+
+    createAnEnterpiseNetwork(profile
+                                 :
+                                 WPAEnterpriseProfile
+    ):
+        Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
                 .then(exists => {
@@ -160,7 +202,19 @@ class LinuxHandler extends WifiHandler {
                         reject(null);
                     } else {
                         const filePath = FileSystemUtil.writeInATempFile(this.getWPASupplicantConf(profile), 'conf');
-                        //TODO: perform the wpa_supplicant command
+                        this.getWifiInterfaceName()
+                            .then(interfaceName => {
+                                this.execute('wpa_supplicant', ['-B', '-i', 'interface', interfaceName, '-c', filePath])
+                                    .then(result => {
+                                        resolve(true);
+                                    })
+                                    .catch(err => {
+                                        reject(false);
+                                    })
+                            })
+                            .catch(err => {
+                                reject(false);
+                            })
                     }
                 })
                 .catch(err => {

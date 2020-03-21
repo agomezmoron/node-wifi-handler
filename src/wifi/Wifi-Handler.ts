@@ -121,7 +121,7 @@ abstract class WifiHandler {
      * @param profile to be created.
      */
 
-    async createNetwork(profile: WifiProfile): Promise<boolean> {
+    async createNetwork(profile): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
                 .then(exists => {

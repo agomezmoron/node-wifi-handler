@@ -12,5 +12,5 @@ class WPAEAPTTLSProfile extends WPAEnterpriseProfile_1.default {
         this.password = password;
     }
 }
-exports.default = WPAEAPTLSProfile;
+exports.default = WPAEAPTTLSProfile;
 //# sourceMappingURL=WPAEAPTTLSProfile.js.map

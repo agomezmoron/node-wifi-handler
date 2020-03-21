@@ -9,5 +9,4 @@ const WifiWrapper = {
         return WifiFactory_1.default.getInstance(config);
     }
 };
-exports.default = WifiWrapper;
 //# sourceMappingURL=index.js.map

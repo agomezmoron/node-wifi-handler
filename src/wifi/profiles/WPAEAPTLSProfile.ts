@@ -12,6 +12,11 @@ class WPAEAPTLSProfile extends WPAEnterpriseProfile {
      */
     clientCertificate: string;
 
+    /**
+     * Path to the private key.
+     */
+    privateClientKey: string;
+
     passphrase: string;
 
     constructor(ssid) {
@@ -25,10 +30,12 @@ class WPAEAPTLSProfile extends WPAEnterpriseProfile {
         caCertificates: string []
         authenticationMethod?: string
         clientCertificate: string,
+        privateClientKey: string,
         passphrase: string
     }) {
         super.applyConfig(config);
         this.clientCertificate = config.clientCertificate;
+        this.privateClientKey = config.privateClientKey;
         this.passphrase = config.passphrase;
     }
 

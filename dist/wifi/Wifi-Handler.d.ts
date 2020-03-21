@@ -21,7 +21,7 @@ declare abstract class WifiHandler {
     getSavedNetworks(): Promise<Network[]>;
     existsNetwork(ssid: any): Promise<boolean>;
     deleteNetwork(ssid: any): Promise<void>;
-    createNetwork(profile: WifiProfile): Promise<boolean>;
+    createNetwork(profile: any): Promise<boolean>;
     abstract createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean>;
     protected isAnPersonalProfile(profile: WifiProfile): boolean;
     protected abstract getCommand(option: string): string;

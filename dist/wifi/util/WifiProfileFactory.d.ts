@@ -6,7 +6,7 @@ declare abstract class WifiProfileFactory {
         password?: string;
         type: string;
         eapType?: number;
-        caCertificates: string[];
+        caCertificates?: string[];
         serverNames?: string;
         anonymous?: string;
         clientCertificate?: string;

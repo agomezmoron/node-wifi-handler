@@ -18,11 +18,11 @@ class WifiProfileFactory {
                         instance = new WPAEAPTLSProfile_1.default(config.ssid);
                         break;
                     case 23:
-                        instance = new WPAEAPPEAPProfile_1.default(config.ssid);
+                        instance = new WPAEAPPEAPProfile_1.default(config.ssid, config.username, config.password);
                         break;
                     case 21:
                     default:
-                        instance = new WPAEAPTTLSProfile_1.default(config.ssid);
+                        instance = new WPAEAPTTLSProfile_1.default(config.ssid, config.username, config.password);
                         break;
                 }
                 instance.applyConfig(config);

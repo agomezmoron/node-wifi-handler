@@ -2,6 +2,7 @@ import WifiProfile from "../profiles/WifiProfile";
 declare abstract class WifiProfileFactory {
     static getInstance(config: {
         ssid: string;
+        username?: string;
         password?: string;
         type: string;
         eapType?: number;

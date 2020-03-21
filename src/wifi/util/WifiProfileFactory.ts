@@ -18,23 +18,26 @@ abstract class WifiProfileFactory {
      * Method to get an instance of WifiProfile depending the given configuration.
      * config = {
      *     ssid: 'SSID of the wifi',
+     *     username_: 'username' // for ENTERPRISE
      *     type: WifiProfile.PERSONAL or WifiProfile.ENTERPRISE,
      *     password: '[Optional] Only valid for the WifiProfile.PERSONAL networks',
-     *     caCertificates: '[Optional] Array with all the CACertificates with the format -----BEGIN CERTIFICATE-----xxx-----END CERTIFICATE-----',
+     *     caCertificates: '[Optional] Array with all the certificates (paths)
      *     anonymous: '[Optional] Anonymous identity for the configuration',
-     *
+     *     clientCertificate: [Optional] Path to the client certificate,
+     *     passphrase: [Optional (but mandatory if clientCertificate is given) of the clientCertificate
      * }
      */
     public static getInstance(config: {
         ssid: string,
+        username?: string, // ENTERPRISE
         password?: string,
         type: string, // PERSONAL or ENTERPRISE
         eapType?: number // only for ENTERPRISE
-        caCertificates: string[],
-        serverNames?: string,
-        anonymous?: string,
-        clientCertificate?: string,
-        passphrase?: string
+        caCertificates: string[], // ENTERPRISE
+        serverNames?: string, // ENTERPRISE
+        anonymous?: string, // ENTERPRISE
+        clientCertificate?: string, // ENTERPRISE
+        passphrase?: string // ENTERPRISE
     }): WifiProfile {
         let instance: WifiProfile = null;
 
@@ -45,11 +48,11 @@ abstract class WifiProfileFactory {
                         instance = new WPAEAPTLSProfile(config.ssid);
                         break;
                     case 23:
-                        instance = new WPAEAPPEAPProfile(config.ssid);
+                        instance = new WPAEAPPEAPProfile(config.ssid, config.username, config.password);
                         break;
                     case 21:
                     default:
-                        instance = new WPAEAPTTLSProfile(config.ssid);
+                        instance = new WPAEAPTTLSProfile(config.ssid, config.username, config.password);
                         break;
 
                 }

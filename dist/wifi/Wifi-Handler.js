@@ -21,6 +21,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const child = __importStar(require("child_process"));
 const ParserFactory_1 = __importDefault(require("./util/ParserFactory"));
+const WPAPersonalProfile_1 = __importDefault(require("./profiles/WPAPersonalProfile"));
 class WifiHandler {
     constructor(config) {
         this.commandTypes = {
@@ -108,11 +109,31 @@ class WifiHandler {
                         reject(null);
                     }
                     else {
-                        this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, { profile: profile }))
-                            .then(result => {
-                            this.existsNetwork(profile.ssid)
-                                .then(exists => {
-                                if (exists) {
+                        if (this.isAnPersonalProfile(profile)) {
+                            this.execute(this.getCommand(this.commandTypes.CREATE), this.getArgs(this.commandTypes.CREATE, { profile: profile }))
+                                .then(result => {
+                                this.existsNetwork(profile.ssid)
+                                    .then(exists => {
+                                    if (exists) {
+                                        resolve(true);
+                                    }
+                                    else {
+                                        reject(false);
+                                    }
+                                })
+                                    .catch(err => {
+                                    reject(false);
+                                });
+                            })
+                                .catch(err => {
+                                this.showDebug(err);
+                                resolve(false);
+                            });
+                        }
+                        else {
+                            const castedProfile = profile;
+                            this.createAnEnterpiseNetwork(castedProfile).then(created => {
+                                if (created) {
                                     resolve(true);
                                 }
                                 else {
@@ -120,13 +141,10 @@ class WifiHandler {
                                 }
                             })
                                 .catch(err => {
+                                this.showDebug(err);
                                 reject(false);
                             });
-                        })
-                            .catch(err => {
-                            this.showDebug(err);
-                            resolve(false);
-                        });
+                        }
                     }
                 })
                     .catch(err => {
@@ -135,6 +153,9 @@ class WifiHandler {
                 });
             });
         });
+    }
+    isAnPersonalProfile(profile) {
+        return profile instanceof WPAPersonalProfile_1.default;
     }
     getCurrentConfig() {
         return { interface: this.interface, debug: this.debug };

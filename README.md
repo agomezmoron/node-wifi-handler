@@ -22,7 +22,7 @@ Depending on the OS System, some native tools are used:
 
 ---
 
-## Install
+## Install (pending to publish the library in npm)
 
 ```bash
 # Use as a module
@@ -41,7 +41,11 @@ import WifiHandler from "node-wifi-handler"
 
 const handler: WifiHandler = WifiWrapper.getWifiHandler();
 
-const profile: WifiProfile = new WPAPersonalProfile('SSID', 'PASSWORD');
+const profile: WifiProfile = WifiProfileFactory.getInstance({
+                                     ssid: 'myssid',
+                                     password: 'myhomessidpassword',
+                                     type: WifiProfile.PERSONAL
+                                 });
 
 handler.createNetwork(profile)
     .then(output => console.log('Profile configured'))

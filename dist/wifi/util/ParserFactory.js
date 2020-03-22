@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const LinuxParser_1 = __importDefault(require("../linux/LinuxParser"));
+const WindowsParser_1 = __importDefault(require("../windows/WindowsParser"));
 class ParserFactory {
     static getInstance() {
         let instance = null;
@@ -14,6 +15,7 @@ class ParserFactory {
             case 'darwin':
                 break;
             case 'win32':
+                instance = new WindowsParser_1.default();
                 break;
         }
         return instance;

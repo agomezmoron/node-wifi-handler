@@ -81,7 +81,29 @@ class WindowsParser implements Parser {
     parseSavedNetworks(input, config?): Network[] {
         const networks: Network[] = [];
 
-        // TODO
+        input = input
+            .toString('utf8')
+            .split('\r')
+            .join('')
+            .split('\n');
+
+        input.forEach( line => {
+            console.log('Line: ' + line);
+            let lineParts = line.split(':');
+            // trimming all the parts
+            lineParts.forEach((value, index, lineParts) => {
+                lineParts[index] = value.split(/\s/).join('');
+            });
+            // removing the empty strings
+            lineParts =  lineParts.filter(item => item);
+            // if the line is candidate
+            if (lineParts.length == 2) {
+                // building the Network object
+                let network: Network = new Network();
+                network.ssid = lineParts[1];
+                networks.push(network);
+            }
+        });
 
         return networks;
     }

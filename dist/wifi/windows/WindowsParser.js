@@ -57,6 +57,24 @@ class WindowsParser {
     }
     parseSavedNetworks(input, config) {
         const networks = [];
+        input = input
+            .toString('utf8')
+            .split('\r')
+            .join('')
+            .split('\n');
+        input.forEach(line => {
+            console.log('Line: ' + line);
+            let lineParts = line.split(':');
+            lineParts.forEach((value, index, lineParts) => {
+                lineParts[index] = value.split(/\s/).join('');
+            });
+            lineParts = lineParts.filter(item => item);
+            if (lineParts.length == 2) {
+                let network = new Network_1.default();
+                network.ssid = lineParts[1];
+                networks.push(network);
+            }
+        });
         return networks;
     }
 }

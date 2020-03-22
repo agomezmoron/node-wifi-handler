@@ -20,9 +20,9 @@ class WindowsHandler extends Wifi_Handler_1.default {
     getCommand(option) {
         switch (option) {
             case this.commandTypes.SCAN:
+            case this.commandTypes.SAVED:
                 return 'netsh';
                 break;
-            case this.commandTypes.SAVED:
             case this.commandTypes.DELETE:
             case this.commandTypes.CREATE:
                 return '';
@@ -42,6 +42,9 @@ class WindowsHandler extends Wifi_Handler_1.default {
                 args.push('mode=Bssid');
                 break;
             case this.commandTypes.SAVED:
+                args.push('wlan');
+                args.push('show');
+                args.push('profiles');
                 break;
             case this.commandTypes.DELETE:
                 break;

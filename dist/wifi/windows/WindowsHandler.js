@@ -20,6 +20,8 @@ class WindowsHandler extends Wifi_Handler_1.default {
     getCommand(option) {
         switch (option) {
             case this.commandTypes.SCAN:
+                return 'netsh';
+                break;
             case this.commandTypes.SAVED:
             case this.commandTypes.DELETE:
             case this.commandTypes.CREATE:
@@ -34,6 +36,10 @@ class WindowsHandler extends Wifi_Handler_1.default {
         let args = [];
         switch (option) {
             case this.commandTypes.SCAN:
+                args.push('wlan');
+                args.push('show');
+                args.push('networks');
+                args.push('mode=Bssid');
                 break;
             case this.commandTypes.SAVED:
                 break;

@@ -1,36 +1,24 @@
-/**
- * Windows parser class.
- * Author: Alejandro Gomez @agomezmoron
- */
-
-import Parser from "../Parser"
-import Network from "../Network";
-import NetworkUtils from "../util/NetworkUtils";
-
-class WindowsParser implements Parser {
-
-    /**
-     * Custom parser for Windows for the scan output.
-     * @param input
-     * @param config
-     */
-    parseScan(input, config?): Network[] {
-        const networks: Network[] = [];
-
-        // This part was copied from https://github.com/friedrith/node-wifi/blob/master/src/windows-scan.js#L17
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Network_1 = __importDefault(require("../Network"));
+const NetworkUtils_1 = __importDefault(require("../util/NetworkUtils"));
+class WindowsParser {
+    parseScan(input, config) {
+        const networks = [];
         input = input
             .toString('utf8')
             .split('\r')
             .join('')
             .split('\n')
             .slice(5, input.length);
-
         let numNetworks = -1;
         let currentLine = 0;
         let networkTmp;
         let networksTmp = [];
         let network;
-
         for (let i = 0; i < input.length; i++) {
             if (input[i] === '') {
                 numNetworks++;
@@ -39,12 +27,9 @@ class WindowsParser implements Parser {
                 currentLine = i + 1;
             }
         }
-
         for (let i = 0; i < numNetworks; i++) {
-            // skip empty networks
             if (networksTmp[i] && networksTmp[i].length > 0) {
-                network = new Network();
-
+                network = new Network_1.default();
                 network.mac = networkTmp[4] ? networkTmp[4].match(/.*?:\s(.*)/)[1] : '';
                 network.bssid = network.mac;
                 network.ssid = networkTmp[0] ? networkTmp[0].match(/.*?:\s(.*)/)[1] : '';
@@ -52,10 +37,10 @@ class WindowsParser implements Parser {
                     ? parseInt(networkTmp[7].match(/.*?:\s(.*)/)[1])
                     : -1;
                 network.frequency = network.channel
-                    ? parseInt(NetworkUtils.frequencyFromChannel(network.channel))
+                    ? parseInt(NetworkUtils_1.default.frequencyFromChannel(network.channel))
                     : 0;
                 network.signal_level = networkTmp[5]
-                    ? NetworkUtils.dBFromQuality(networkTmp[5].match(/.*?:\s(.*)/)[1])
+                    ? NetworkUtils_1.default.dBFromQuality(networkTmp[5].match(/.*?:\s(.*)/)[1])
                     : Number.MIN_VALUE;
                 network.quality = networkTmp[5]
                     ? parseFloat(networkTmp[5].match(/.*?:\s(.*)/)[1])
@@ -65,27 +50,15 @@ class WindowsParser implements Parser {
                     ? networkTmp[3].match(/.*?:\s(.*)/)[1]
                     : '';
                 network.mode = 'Unknown';
-
                 networks.push(network);
             }
         }
-
         return networks;
     }
-
-    /**
-     * Custom parser for Windows for the saved networks output.
-     * @param input
-     * @param config
-     */
-    parseSavedNetworks(input, config?): Network[] {
-        const networks: Network[] = [];
-
-        // TODO
-
+    parseSavedNetworks(input, config) {
+        const networks = [];
         return networks;
     }
-
 }
-
-export default WindowsParser;
+exports.default = WindowsParser;
+//# sourceMappingURL=WindowsParser.js.map

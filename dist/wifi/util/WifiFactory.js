@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const LinuxHandler_1 = __importDefault(require("../linux/LinuxHandler"));
+const WindowsHandler_1 = __importDefault(require("../windows/WindowsHandler"));
 class WifiFactory {
     static getInstance(config) {
         let instance = null;
@@ -14,6 +15,7 @@ class WifiFactory {
             case 'darwin':
                 break;
             case 'win32':
+                instance = new WindowsHandler_1.default(config);
                 break;
         }
         return instance;

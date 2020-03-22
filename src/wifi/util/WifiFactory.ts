@@ -5,6 +5,7 @@
 
 import WifiHandler from "../Wifi-Handler";
 import LinuxHandler from "../linux/LinuxHandler";
+import WindowsHandler from "../windows/WindowsHandler"
 
 /**
  * Factory to build WifiHandlers.
@@ -27,6 +28,7 @@ abstract class WifiFactory {
                 // macOS
                 break;
             case 'win32':
+                instance = new WindowsHandler(config);
                 break;
         }
         return instance;

@@ -5,15 +5,15 @@ Node module to work with the Wi-Fi inspired on [node-wifi](https://github.com/fr
 Nowadays it's Work In Progress but
 
 
-| Features                         | Linux             | Mac | Windows |
-| -------------------------------- | ------------------| ----| --------|
-| Connect - WPA Personal           | :heavy_check_mark:| WIP | WIP     |
-| Connect - WPA Enterpise - EAP 13 | :heavy_check_mark:| WIP | WIP     |
-| Connect - WPA Enterpise - EAP 21 | :heavy_check_mark:| WIP | WIP     |
-| Connect - WPA Enterpise - EAP 23 | :heavy_check_mark:| WIP | WIP     |
-| Scan                             | :heavy_check_mark:| WIP | WIP     |
-| List current wifi connections    | :heavy_check_mark:| WIP | WIP     |
-| Delete connection information    | :heavy_check_mark:| WIP | WIP     |
+| Features                         | Linux             | Mac | Windows           |
+| -------------------------------- | ------------------| ----| ------------------|
+| Connect - WPA Personal           | :heavy_check_mark:| WIP | WIP               |
+| Connect - WPA Enterpise - EAP 13 | :heavy_check_mark:| WIP | WIP               |
+| Connect - WPA Enterpise - EAP 21 | :heavy_check_mark:| WIP | WIP               |
+| Connect - WPA Enterpise - EAP 23 | :heavy_check_mark:| WIP | WIP               |
+| Scan                             | :heavy_check_mark:| WIP | :heavy_check_mark:|
+| List current wifi connections    | :heavy_check_mark:| WIP | :heavy_check_mark:|
+| Delete connection information    | :heavy_check_mark:| WIP | WIP               |
 
 
 Depending on the OS System, some native tools are used:

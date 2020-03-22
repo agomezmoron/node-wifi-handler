@@ -6,6 +6,7 @@
 import Parser from "../Parser";
 import LinuxHandler from "../linux/LinuxHandler";
 import LinuxParser from "../linux/LinuxParser";
+import WindowsParser from "../windows/WindowsParser";
 
 /**
  * Parser factory to build parsers depending on the OS.
@@ -26,6 +27,7 @@ abstract class ParserFactory {
               // macOS
               break;
           case 'win32':
+              instance = new WindowsParser();
               break;
       }
       return instance;

@@ -26,10 +26,8 @@ Depending on the OS System, some native tools are used:
 
 ```bash
 # Use as a module
-npm install node-wifi-handler
+npm install node-wifi-handler --save
 
-# Use as a CLI
-npm install node-wifi-handler -g
 ```
 
 

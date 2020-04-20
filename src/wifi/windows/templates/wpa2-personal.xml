@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<WLANProfile xmlns="https://www.microsoft.com/networking/WLAN/profile/v1">
+    <!-- https://docs.microsoft.com/en-us/windows/win32/nativewifi/wpa2-personal-profile-sample -->
+    <name>__WIFI_PROFILE_NAME__</name>
+    <SSIDConfig>
+        <SSID>
+            <name>__WIFI_PROFILE_SSID__</name>
+        </SSID>
+    </SSIDConfig>
+    <connectionType>ESS</connectionType>
+    <connectionMode>auto</connectionMode>
+    <autoSwitch>false</autoSwitch>
+    <MSM>
+        <security>
+            <authEncryption>
+                <authentication>WPA2PSK</authentication>
+                <encryption>AES</encryption>
+                <useOneX>false</useOneX>
+            </authEncryption>
+        </security>
+        <sharedKey>
+            <keyType>passPhrase</keyType>
+            <protected>false</protected>
+            <keyMaterial>__WIFI_PROFILE_PASSWORD__</keyMaterial>
+        </sharedKey>
+    </MSM>
+</WLANProfile>

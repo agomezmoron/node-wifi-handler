@@ -72,6 +72,36 @@ abstract class FileSystemUtil {
         }
 
     }
+
+    /**
+     * It replaces in the given filePath the replacements.
+     * @param filePath path to the source file. If newPath is not defined, the changes will be done there.
+     * @param replacements key (needle) => value (replacement).
+     * @param newPath (optional). If not empty, a copy of filePat will be done and there will be the replacements done.
+     */
+    static replaceAll(filePath: string, replacements: Object, newPath?: string) {
+        let fileToReplace = filePath;
+        if (!!newPath && newPath !== undefined) {
+            fileToReplace = newPath;
+        }
+        if (fs.existsSync(filePath) && fs.existsSync(fileToReplace)) {
+            if (filePath != fileToReplace) {
+                fs.copyFileSync(filePath, fileToReplace);
+            }
+            fs.readFile(filePath, 'utf8', function (err, data) {
+                if (err) {
+                    return console.log(err);
+                }
+                let result = data;
+                Object.keys(replacements).forEach(key => {
+                    result = result.replace(key, replacements[key]);
+                });
+                fs.writeFile(filePath, result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                });
+            });
+        }
+    }
 }
 
 export default FileSystemUtil;

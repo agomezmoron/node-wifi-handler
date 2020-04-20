@@ -13,6 +13,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import WPAEnterpriseProfile from "./profiles/WPAEnterpriseProfile";
+import WPA2PersonalProfile from "./profiles/WPA2PersonalProfile";
 
 /**
  * Interface that every handler should implement.
@@ -120,7 +121,6 @@ abstract class WifiHandler {
      * It creates a network (but if shouldn't exists!).
      * @param profile to be created.
      */
-
     async createNetwork(profile): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
@@ -183,7 +183,7 @@ abstract class WifiHandler {
      * It checks if it's a Personal profile or not.
      */
     protected isAnPersonalProfile(profile: WifiProfile): boolean {
-        return profile instanceof WPAPersonalProfile;
+        return profile instanceof WPAPersonalProfile || profile instanceof WPA2PersonalProfile;
     }
 
     /**

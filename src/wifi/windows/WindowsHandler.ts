@@ -33,9 +33,9 @@ class WindowsHandler extends WifiHandler {
         switch (option) {
             case this.commandTypes.SCAN:
             case this.commandTypes.SAVED:
+            case this.commandTypes.DELETE:
                 return 'netsh';
                 break;
-            case this.commandTypes.DELETE:
             case this.commandTypes.CREATE:
                 return '';// TODO
                 break;
@@ -60,7 +60,10 @@ class WindowsHandler extends WifiHandler {
                 args.push('profiles');
                 break;
             case this.commandTypes.DELETE:
-                // TODO
+                args.push('wlan');
+                args.push('delete');
+                args.push('profile');
+                args.push('name="'+ config.ssid +'"');
                 break;
             case this.commandTypes.CREATE:
                 // TODO

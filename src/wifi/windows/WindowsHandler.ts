@@ -63,7 +63,9 @@ class WindowsHandler extends WifiHandler {
                 args.push('wlan');
                 args.push('delete');
                 args.push('profile');
-                args.push('name="'+ config.ssid +'"');
+                if (!!config && config.ssid) {
+                    args.push('name="'+ config.ssid +'"');
+                }
                 break;
             case this.commandTypes.CREATE:
                 // TODO

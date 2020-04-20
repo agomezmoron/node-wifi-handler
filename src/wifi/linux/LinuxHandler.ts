@@ -163,13 +163,7 @@ class LinuxHandler extends WifiHandler {
      * It builds all the CA part related to multiple CA (if exists).
      * @param profile to be used.
      */
-    private
-
-    getWPASupplicantCAParts(profile
-                                :
-                                WPAEnterpriseProfile
-    ):
-        string {
+    private getWPASupplicantCAParts(profile: WPAEnterpriseProfile): string {
         let caParts = '';
         let cont = 1;
         profile.caCertificates.forEach(caPath => {
@@ -187,13 +181,7 @@ class LinuxHandler extends WifiHandler {
      * In this handler we overrides this function to create an enterprise network.
      * @param profile WPAEnterpriseProfile to be configured.
      */
-    async
-
-    createAnEnterpiseNetwork(profile
-                                 :
-                                 WPAEnterpriseProfile
-    ):
-        Promise<boolean> {
+    async createAnEnterpiseNetwork(profile: WPAEnterpriseProfile): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.existsNetwork(profile.ssid)
                 .then(exists => {
